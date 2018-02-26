@@ -14,4 +14,4 @@ func ParseYamlFile(filepath string) (result map[interface{}]interface{}, err err
 	conf := make(map[interface{}]interface{})
 	err = yaml.Unmarshal(content, &conf)
 	return conf, err
-}
+} 
