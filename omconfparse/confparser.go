@@ -23,21 +23,33 @@ func ParseYamlFile(filepath string) (result map[interface{}]interface{}, err err
 func ParseConf(confdata map[interface{}]interface{}) {
 	for k, v := range confdata {
 		if k == "webapps" {
-			val := v.(map[interface{}]interface{})
-			ParseSite(val)
+			ParseWebapps(v.(map[interface{}]interface{}))
 		}
 	}
 }
 
 func ParseWebapps(webapp map[interface{}]interface{}) {
-	/*for k, v := range webapp {
-	        if
+	for k, v := range webapp {
+		if _, ok := k.(int); ok == true {
+			ParseSite(v.(map[interface{}]interface{}))
+		}
+		/*switch v := k.(type) {
+		case int:
+			fmt.Println("k.(type):", "int", v)
+		case uint16:
+			fmt.Println("k.(type):", "uint16", v)
+		case string:
+			fmt.Println("k.(type):", "string", v)
+		default:
+			fmt.Println("k.(type):", "other", v)
 		}*/
+	}
 }
 
 func ParseSite(sitedata map[interface{}]interface{}) {
-	//var siteinfo wafsite.Site
-	//sd, ok := sitedata.(map[interface{}]interface{})
-	//fmt.Printf("\n%v\n--- t:\n%v\n\n", ok, sd)
-	fmt.Printf("--- t:\n%v\n\n", sitedata)
+	for k, v := range sitedata {
+		if k == "entry" {
+			fmt.Println("entry:", v)
+		}
+	}
 }
