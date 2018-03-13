@@ -1,31 +1,17 @@
 package omdbsqlite
 
 import (
+	"fmt"
 	"github.com/go-xorm/xorm"
-	"github.com/mattn/go-sqlite3"
+	//"github.com/mattn/go-sqlite3"
 )
 
-type DBAttr struct {
-	dbi interface{}
-}
-
-type DBMethod interface {
-	Conn(fd interface{})
-	Exec(sqlstmt string)
-	DisConn()
-}
-
-type DBObj struct {
-	DBAttr
-	DBMethod
-}
-
-func CreateSQLite3Engine() *xorm.Engine {
-	var err error
-	var engine *xorm.Engine
-	engine, err = xorm.NewEngine("sqlite3", "./webapp_sqlite3.db")
-	if engine != nil {
-		return engine
+func CreateDBEngine() (*xorm.Engine, error) {
+	//var engine *xorm.Engine
+	engine, err := xorm.NewEngine("sqlite3", "./webapp_sqlite3.db")
+	if err == nil {
+		return engine, nil
 	}
-	return nil
+	fmt.Println("xorm.NewEngine failed with: ", err.Error())
+	return nil, err
 }
