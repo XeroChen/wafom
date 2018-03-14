@@ -12,14 +12,16 @@ import (
 	//"reflect"
 )
 
-var gDBEng *xorm.Engine
+type ConfEngine struct {
+	gDBEng *xorm.Engine
+}
 
-func InitDB() int {
-	if eng, err := omdbsqlite.CreateDBEngine(); err == nil {
-		gDBEng = eng
+func (eng *ConfEngine) Init() int {
+	if dbeng, err := omdbsqlite.CreateDBEngine(); err == nil {
+		eng.gDBEng = dbeng
 		return 0
 	}
-	fmt.Println("[ERR] InitDB() failure!")
+	fmt.Println("[ERR] Init() failure!")
 	return -1
 }
 
