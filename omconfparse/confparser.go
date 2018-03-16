@@ -13,19 +13,21 @@ import (
 )
 
 type ConfEngine struct {
-	gDBEng *xorm.Engine
+	gDBEng     *xorm.Engine
+	gConfFiles []string
 }
 
 func (eng *ConfEngine) Init() int {
 	if dbeng, err := omdbsqlite.CreateDBEngine(); err == nil {
 		eng.gDBEng = dbeng
+		eng.init_tables()
 		return 0
 	}
 	fmt.Println("[ERR] Init() failure!")
 	return -1
 }
 
-func InitDBTables() {
+func (eng *ConfEngine) init_tables() {
 	return
 }
 

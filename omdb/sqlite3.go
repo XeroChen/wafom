@@ -8,10 +8,11 @@ import (
 )
 
 func CreateDBEngine() (*xorm.Engine, error) {
-	//var engine *xorm.Engine
 	engine, err := xorm.NewEngine("sqlite3", "./webapp_sqlite3.db")
 	if err == nil {
 		engine.SetMapper(core.SameMapper{})
+		tbMapper := core.NewPrefixMapper(core.SameMapper{}, "waf_")
+		engine.SetTableMapper(tbMapper)
 		return engine, nil
 	}
 	fmt.Println("xorm.NewEngine failed with: ", err.Error())

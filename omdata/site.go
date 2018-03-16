@@ -1,4 +1,4 @@
-package wafsite
+package wafdata
 
 type Site struct {
 	index    uint32
