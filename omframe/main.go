@@ -1,7 +1,6 @@
 package main
 
 import cfp "../omconfparse"
-import omdb "../omdb"
 import "fmt"
 
 func main() {
@@ -9,7 +8,6 @@ func main() {
 	if result == nil || err != nil {
 		fmt.Println("parse file error.")
 	}
-	//fmt.Printf("--- t:\n%v\n\n", result)
 
 	cfp.ParseConf(result)
 	return

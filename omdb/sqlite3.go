@@ -1,4 +1,4 @@
-package omdbsqlite
+package omdb
 
 import (
 	"fmt"

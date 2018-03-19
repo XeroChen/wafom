@@ -1,35 +1,10 @@
 package omconfparse
 
 import (
-	"github.com/mattn/go-sqlite3"
-	//"github.com/go-yaml/yaml"
-	"../omdb"
 	"fmt"
-	"github.com/go-xorm/xorm"
-	"io/ioutil"
-	//"../omdata"
 	"gopkg.in/yaml.v2"
-	//"reflect"
+	"io/ioutil"
 )
-
-type ConfEngine struct {
-	gDBEng     *xorm.Engine
-	gConfFiles []string
-}
-
-func (eng *ConfEngine) Init() int {
-	if dbeng, err := omdbsqlite.CreateDBEngine(); err == nil {
-		eng.gDBEng = dbeng
-		eng.init_tables()
-		return 0
-	}
-	fmt.Println("[ERR] Init() failure!")
-	return -1
-}
-
-func (eng *ConfEngine) init_tables() {
-	return
-}
 
 // ParseYamlFile parse yaml file to map[interface{}]interface{}
 func ParseYamlFile(filepath string) (result map[interface{}]interface{}, err error) {
