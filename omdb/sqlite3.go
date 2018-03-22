@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
-	//"github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func CreateDBEngine() (*xorm.Engine, error) {

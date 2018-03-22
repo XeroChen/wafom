@@ -1,4 +1,4 @@
-package wafdata
+package omdata
 
 type Site struct {
 	index    uint32

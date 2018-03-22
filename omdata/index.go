@@ -1,4 +1,4 @@
-package wafdata
+package omdata
 
 import (
 	"../omdb"
@@ -30,6 +30,7 @@ func (p *IdAllocator) Alloc() uint32 {
 		if p.Tag[i] == 0 {
 			p.Tag[i] = 1
 			DBHandle := omdb.GetDB()
+			defer omdb.CloseDB(DBHandle)
 			if errcode, err := DBHandle.Update(p); err != nil {
 				fmt.Println("IdAllocator.Alloc() returns error:", string(errcode), err.Error())
 				return INVALID_INDEX
@@ -52,6 +53,7 @@ func (p *IdAllocator) Free(idx uint32) bool {
 
 	p.Tag[idx] = 0
 	DBHandle := omdb.GetDB()
+	defer omdb.CloseDB(DBHandle)
 	if errcode, err := DBHandle.Update(p); err != nil {
 		fmt.Println("IdAllocator.Free() returns error:", string(errcode), err.Error())
 		return false
@@ -62,6 +64,8 @@ func (p *IdAllocator) Free(idx uint32) bool {
 
 func DestroyIdAllocator(name string) bool {
 	DBHandle := omdb.GetDB()
+	defer omdb.CloseDB(DBHandle)
+
 	if errcode, err := DBHandle.Delete(&IdAllocator{Name: name}); err != nil {
 		fmt.Println("IdAllocator.Alloc() returns error:", string(errcode), err.Error())
 		return false
@@ -81,6 +85,15 @@ func CreateIdAllocator(name string, max uint32) *IdAllocator {
 	}
 
 	DBHandle := omdb.GetDB()
+	defer omdb.CloseDB(DBHandle)
+	/* Table does not exist, create it first */
+	if ext, _ := DBHandle.IsTableExist(new(IdAllocator)); ext != true {
+		err := DBHandle.CreateTables(new(IdAllocator))
+		if err != nil {
+			fmt.Println("DBHandle.Insert() returns error:", err.Error())
+			return nil
+		}
+	}
 	NewAllocator := new(IdAllocator)
 	NewAllocator.Mutex = sync.Mutex{}
 	NewAllocator.Name = name
@@ -99,6 +112,8 @@ func CreateIdAllocator(name string, max uint32) *IdAllocator {
 func GetIdAllocator(name string) *IdAllocator {
 	var Allocator = IdAllocator{Name: name}
 	DBHandle := omdb.GetDB()
+	defer omdb.CloseDB(DBHandle)
+
 	if has, err := DBHandle.Get(&Allocator); has == false {
 		fmt.Println("GetIdAllocator returns error:", err.Error())
 		return nil

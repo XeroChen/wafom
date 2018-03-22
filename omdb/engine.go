@@ -6,37 +6,34 @@ import (
 	"sync"
 )
 
-type ConfEngine struct {
-	DBEngine   *xorm.Engine
-	gConfFiles []string
-}
+var gEngine *xorm.Engine
+var gMutex sync.Mutex
 
-var g_conf_engine *ConfEngine
-var g_mutex sync.Mutex
-
-func (eng *ConfEngine) init() int {
-	if dbeng, err := CreateDBEngine(); err == nil {
-		eng.DBEngine = dbeng
-		eng.init_tables()
-		return 0
+func initDB() *xorm.Engine {
+	dbeng, err := CreateDBEngine()
+	if err != nil {
+		fmt.Println("[ERR] Init() failure! ", err.Error())
+		return nil
 	}
-	fmt.Println("[ERR] Init() failure!")
-	return -1
-}
-
-func (eng *ConfEngine) init_tables() {
-	return
+	return dbeng
 }
 
 func GetDB() *xorm.Engine {
-	g_mutex.Lock()
-	defer g_mutex.Unlock()
+	gMutex.Lock()
+	defer gMutex.Unlock()
 
-	if g_conf_engine == nil {
-		g_conf_engine = &ConfEngine{}
+	if gEngine == nil {
+		gEngine = initDB()
 	}
+	return gEngine
+}
 
-	g_conf_engine.init()
+func CloseDB(*xorm.Engine) {
+	gMutex.Lock()
+	defer gMutex.Unlock()
 
-	return g_conf_engine.DBEngine
+	if gEngine != nil {
+		gEngine.Close()
+		gEngine = nil
+	}
 }
