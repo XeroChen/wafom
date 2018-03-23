@@ -13,6 +13,7 @@ func CreateDBEngine() (*xorm.Engine, error) {
 		engine.SetMapper(core.SameMapper{})
 		tbMapper := core.NewPrefixMapper(core.SameMapper{}, "waf_")
 		engine.SetTableMapper(tbMapper)
+		engine.SetMaxOpenConns(5)
 		return engine, nil
 	}
 	fmt.Println("xorm.NewEngine failed with: ", err.Error())

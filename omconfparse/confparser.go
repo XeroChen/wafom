@@ -7,7 +7,7 @@ import (
 )
 
 // ParseYamlFile parse yaml file to map[interface{}]interface{}
-func ParseYamlFile(filepath string) (result map[interface{}]interface{}, err error) {
+func ParseWebAppFile(filepath string) (result map[interface{}]interface{}, err error) {
 	content, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,10 @@ func ParseConf(confdata map[interface{}]interface{}) {
 func ParseWebapps(webapp map[interface{}]interface{}) {
 	for k, v := range webapp {
 		if _, ok := k.(int); ok == true {
-			ParseSite(k.(int), v.(map[interface{}]interface{}))
+			/*test for site 1*/
+			if k.(int) == 1 {
+				ParseSite(k.(int), v.(map[interface{}]interface{}))
+			}
 		}
 	}
 }
@@ -37,6 +40,12 @@ func ParseSite(siteindex int, sitedata map[interface{}]interface{}) {
 	for k, v := range sitedata {
 		if k == "entry" {
 			fmt.Println("entry:", v)
+		}
+		if k == "header_dels" {
+			fmt.Println("header_dels:", v)
+		}
+		if k == "firewall" {
+			fmt.Println("firewall:", v)
 		}
 	}
 }

@@ -1,0 +1,6 @@
+---
+reverse_xfwd4: "on"
+embb1:
+  sfield1: "xxx"
+  sfield2: 1
+other: "yes"
