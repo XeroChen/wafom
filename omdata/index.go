@@ -3,6 +3,7 @@ package omdata
 import (
 	"../omdb"
 	"fmt"
+	"github.com/go-xorm/core"
 	"math"
 	"sync"
 )
@@ -10,10 +11,8 @@ import (
 type IdAllocator struct {
 	Name      string `xorm:"pk varchar(255) notnull"`
 	Tag       []byte
-	Candidate uint32     `xorm:"-"`
 	Max       uint32     `xorm:"notnull default(0)"`
-	Current   uint32     `xorm:"notnull default(0)"`
-	Invalid   uint32     `xorm:"notnull default(0)"`
+	Candidate uint32     `xorm:"-"`
 	Mutex     sync.Mutex `xorm:"-"`
 }
 
@@ -31,7 +30,7 @@ func (p *IdAllocator) Alloc() uint32 {
 			p.Tag[i] = 1
 			DBHandle := omdb.GetDB()
 			defer omdb.CloseDB(DBHandle)
-			if errcode, err := DBHandle.Update(p); err != nil {
+			if errcode, err := DBHandle.ID(core.PK{p.Name}).Cols("Tag").Update(p); err != nil {
 				fmt.Println("IdAllocator.Alloc() returns error:", string(errcode), err.Error())
 				return INVALID_INDEX
 			}
@@ -54,7 +53,7 @@ func (p *IdAllocator) Free(idx uint32) bool {
 	p.Tag[idx] = 0
 	DBHandle := omdb.GetDB()
 	defer omdb.CloseDB(DBHandle)
-	if errcode, err := DBHandle.Update(p); err != nil {
+	if errcode, err := DBHandle.ID(core.PK{p.Name}).Cols("Tag").Update(p); err != nil {
 		fmt.Println("IdAllocator.Free() returns error:", string(errcode), err.Error())
 		return false
 	}
@@ -66,7 +65,7 @@ func DestroyIdAllocator(name string) bool {
 	DBHandle := omdb.GetDB()
 	defer omdb.CloseDB(DBHandle)
 
-	if errcode, err := DBHandle.Delete(&IdAllocator{Name: name}); err != nil {
+	if errcode, err := DBHandle.ID(core.PK{name}).Delete(new(IdAllocator)); err != nil {
 		fmt.Println("IdAllocator.Alloc() returns error:", string(errcode), err.Error())
 		return false
 	}
@@ -99,9 +98,7 @@ func CreateIdAllocator(name string, max uint32) *IdAllocator {
 	NewAllocator.Name = name
 	NewAllocator.Max = max
 	NewAllocator.Candidate = 0
-	NewAllocator.Invalid = INVALID_INDEX
-	NewAllocator.Current = NewAllocator.Invalid
-	NewAllocator.Tag = make([]byte, 0, NewAllocator.Max)
+	NewAllocator.Tag = make([]byte, NewAllocator.Max)
 	if errcode, err := DBHandle.Insert(NewAllocator); err != nil {
 		fmt.Println("DBHandle.Insert() returns error:", string(errcode), err.Error())
 		return nil
@@ -110,11 +107,11 @@ func CreateIdAllocator(name string, max uint32) *IdAllocator {
 }
 
 func GetIdAllocator(name string) *IdAllocator {
-	var Allocator = IdAllocator{Name: name}
+	var Allocator IdAllocator
 	DBHandle := omdb.GetDB()
 	defer omdb.CloseDB(DBHandle)
 
-	if has, err := DBHandle.Get(&Allocator); has == false {
+	if has, err := DBHandle.ID(core.PK{name}).Get(&Allocator); has == false {
 		fmt.Println("GetIdAllocator returns error:", err.Error())
 		return nil
 	}

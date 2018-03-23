@@ -39,6 +39,7 @@ func TestCreateIdAllocator(t *testing.T) {
 	IdAllocator := CreateIdAllocator("TestCreateIdAllocator", 1)
 	if IdAllocator == nil {
 		t.Errorf("CreateIdAllocator failed.")
+		return
 	}
 
 	var Idx uint32
@@ -52,7 +53,7 @@ func TestCreateIdAllocator(t *testing.T) {
 		t.Errorf("IdAllocator.Alloc() Idx=%v.", Idx)
 	}
 
-	succeed := IdAllocator.Free(Idx)
+	succeed := IdAllocator.Free(0)
 	if succeed != true {
 		t.Errorf("IdAllocator.Free() failed.")
 	}
