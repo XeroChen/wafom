@@ -1,19 +1,27 @@
 package omconfparse
 
 import (
+	"../omdata"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
 
 // ParseYamlFile parse yaml file to map[interface{}]interface{}
-func ParseWebAppFile(filepath string) (result map[interface{}]interface{}, err error) {
+//func ParseWebAppFile(filepath string) (result map[interface{}]interface{}, err error) {
+func ParseWebAppFile(filepath string) (result omdata.WebAppFmt, err error) {
 	content, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		return nil, err
+		return omdata.WebAppFmt{}, err
 	}
-	conf := make(map[interface{}]interface{})
+	//conf := make(map[interface{}]interface{})
+	var conf omdata.WebAppFmt
 	err = yaml.Unmarshal(content, &conf)
+	/*
+		for k, v := range conf.Webapps {
+			fmt.Printf("\nSite %v: \n%v\n", k, v)
+		}
+	*/
 	return conf, err
 }
 

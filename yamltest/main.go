@@ -1,6 +1,8 @@
 package main
 
 import (
+	"../omconfparse"
+	"../omdata"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -17,6 +19,12 @@ type Emb_struct2 struct {
 	Ifield2 int
 }
 
+type Emb_struct3 struct {
+	present bool
+	Ifield1 int
+	Ifield2 int
+}
+
 /* 妈的这儿有个坑啊 定义成func (st *Emb_struct2) IsZero() bool是不行的 */
 func (st Emb_struct2) IsZero() bool {
 	return !st.present
@@ -26,7 +34,8 @@ type TestYaml struct {
 	Reverse_xfwd4 string      `yaml:"reverse_xfwd4"`
 	Embb1         Emb_struct1 `yaml:",omitempty"`
 	Embb2         Emb_struct2 `yaml:",omitempty"`
-	Other         string
+	Embb3         Emb_struct3 `yaml:",omitempty"`
+	Other         interface{} `yaml:",flow"`
 }
 
 func yamlMarshal(st *TestYaml) {
@@ -38,21 +47,26 @@ func yamlMarshal(st *TestYaml) {
 	fmt.Printf("yaml_marshal succeeded with:\n%s", string(out))
 }
 
-func yamlUnmashal() {
+func yamlUnmarshal() *TestYaml {
 	content, err := ioutil.ReadFile("./test.yaml")
 	if err != nil {
-		return
+		return nil
 	}
 	var conf TestYaml
 	err = yaml.Unmarshal(content, &conf)
 	if err != nil {
-		fmt.Printf("yaml_unmarshal failed with error:\n%s", err.Error())
-		return
+		fmt.Printf("\nyaml_unmarshal failed with error:\n%s", err.Error())
+		return nil
 	}
-	fmt.Printf("yaml_unmarshal succeeded with:\n%v", conf)
-	return
+	fmt.Printf("\nyaml_unmarshal succeeded with:\n%v", conf)
+	/*for i := range conf.Other {
+		fmt.Printf("\nslice within conf.Other[%v]:\n%v", i, conf.Other[i])
+	}*/
+
+	return &conf
 }
 
+/*
 func main() {
 	var conf TestYaml
 	conf.Reverse_xfwd4 = "on"
@@ -61,7 +75,24 @@ func main() {
 	conf.Embb2.present = true
 	conf.Embb2.Ifield1 = 0
 	conf.Embb2.Ifield2 = 0
-	conf.Other = "yes"
+	conf.Other = []string{"", "yes"}
 	yamlMarshal(&conf)
-	yamlUnmashal()
+	yamlUnmarshal()
+}*/
+
+func main() {
+	var result omdata.WebAppFmt
+	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.0\\webapp.yaml")
+	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.1\\webapp.yaml")
+	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.2\\webapp.yaml")
+	for k, v := range result.Webapps {
+		if d, ok := v.Linkage.([]interface{}); ok == true {
+			fmt.Printf("site %v: %v\n", k, d)
+		}
+	}
+	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.3\\webapp.yaml")
+	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.3.1\\webapp.yaml")
+	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.3.2\\webapp.yaml")
+	fmt.Printf("\n%v\n", result)
+	return
 }

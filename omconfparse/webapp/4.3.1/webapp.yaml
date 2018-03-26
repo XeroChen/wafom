@@ -1,0 +1,142 @@
+---
+deploy: bypass
+reverse_transparent: "on"
+reverse_client_ip: ""
+reverse_xfwd4: X-Forwarded-For
+reverse_xfwd4_status: "on"
+webapps:
+  1:
+    name: http-ipv4-1
+    ip: 192.168.26.134
+    port: "80"
+    rule: "1"
+    keepalive: "off"
+    statslog: "off"
+    intellect_defence_enabled: "off"
+    statslog_querystring: "off"
+    statslog_filter: none
+    statslog_filetypes: ""
+    statslog_defaultfile: index.html
+    https: "off"
+    ddos: "off"
+    cache: "off"
+    compression_server: "off"
+    compression_client: "off"
+    tamper: "off"
+    domain_list: []
+    linkage:
+    - Protect1
+    header_del: "off"
+    header_dels:
+    - ""
+    vlan: auto
+    acls_check_native: "on"
+    acls_check_xfwd4: "off"
+    blacklist: "on"
+    enabled: "on"
+    acls: []
+    firewall: []
+    log: premium
+    entry: 1
+    deploy: transparent
+    mask: 255.255.255.0
+  2:
+    name: http-ipv4-2
+    ip: 192.168.26.135
+    port: "80"
+    rule: "1"
+    keepalive: "off"
+    statslog: "off"
+    statslog_querystring: "off"
+    statslog_filter: none
+    statslog_filetypes: ""
+    statslog_defaultfile: index.html
+    https: "off"
+    ddos: "off"
+    cache: "off"
+    compression_server: "off"
+    compression_client: "off"
+    tamper: "off"
+    transparent: "on"
+    xfwd4_status: "off"
+    xfwd4: X-Forwarded-For
+    frontend_port: "80"
+    linkage: FAKE
+    mode: proxy
+    vrrp: "off"
+    domain_list: []
+    acls_check_native: "on"
+    acls_check_xfwd4: "off"
+    blacklist: "on"
+    header_del: "off"
+    header_dels:
+    - ""
+    enabled: "on"
+    acls: []
+    firewall: []
+    log: premium
+    entry: 2
+    deploy: reverse
+    mask: 255.255.255.0
+    frontend:
+      ip: 192.168.26.235
+      netmask: 255.255.255.0
+      gateway: 192.168.26.1
+      linkage: eth0
+    backend:
+      ip: 192.168.26.235
+      netmask: 255.255.255.0
+      gateway: ""
+      linkage: eth1
+  3:
+    name: http-ipv4-3
+    ip: 192.168.26.136
+    port: "80"
+    rule: "1"
+    keepalive: "off"
+    statslog: "off"
+    statslog_querystring: "off"
+    statslog_filter: none
+    statslog_filetypes: ""
+    statslog_defaultfile: index.html
+    https: "off"
+    ddos: "off"
+    cache: "off"
+    compression_server: "off"
+    compression_client: "off"
+    tamper: "off"
+    linkage: Protect1
+    vlan: disable
+    entry: 3
+    deploy: bypass
+    enabled: "on"
+    acls: []
+    log: premium
+    firewall: []
+  4:
+    name: http-ipv4-4
+    ip: 192.168.26.137
+    port: "80"
+    rule: "1"
+    keepalive: "off"
+    statslog: "off"
+    statslog_querystring: "off"
+    statslog_filter: none
+    statslog_filetypes: ""
+    statslog_defaultfile: index.html
+    https: "off"
+    ddos: "off"
+    cache: "off"
+    compression_server: "off"
+    compression_client: "off"
+    tamper: "off"
+    linkage: Protect1
+    enabled: "on"
+    acls: []
+    firewall: []
+    log: premium
+    entry: 4
+    deploy: bridge
+    mask: 255.255.255.0
+web_server: nginx
+...
