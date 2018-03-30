@@ -37,7 +37,7 @@ type Webapps struct {
 	Vrrp                      string
 	Vrrp_position             string   `yaml:",omitempty"`
 	Vrrp_virtual_route_id     string   `yaml:",omitempty"`
-	Domain_list               []string `yaml:"flow"`
+	Domain_list               []string `yaml:",flow"`
 	Acls_check_native         string
 	Acls_check_xfwd4          string
 	Blacklist                 string
@@ -47,9 +47,9 @@ type Webapps struct {
 	Entry                     int
 	Deploy                    string
 	Enabled                   string
-	Acls                      []string `yaml:"flow"`
+	Acls                      []string `yaml:",flow"`
 	Log                       string
-	Firewall                  []string `yaml:"flow"`
+	Firewall                  []string `yaml:",flow"`
 	Mask                      string
 	Frontend                  FrontEndFmt `yaml:"frontend,omitempty"`
 	Backend                   BackendFmt  `yaml:"backend,omitempty"`
@@ -73,7 +73,11 @@ type FrontEndFmt struct {
 	Linkage string
 }
 
-func (fn *FrontEndFmt) IsZero() bool {
+func (fn *FrontEndFmt) SetPresent(present bool) {
+	fn.present = present
+}
+
+func (fn FrontEndFmt) IsZero() bool {
 	return !fn.present
 }
 
@@ -85,6 +89,10 @@ type BackendFmt struct {
 	Linkage string
 }
 
-func (bn *BackendFmt) IsZero() bool {
+func (bn *BackendFmt) SetPresent(present bool) {
+	bn.present = present
+}
+
+func (bn BackendFmt) IsZero() bool {
 	return !bn.present
 }
