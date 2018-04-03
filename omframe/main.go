@@ -1,14 +1,31 @@
 package main
 
-import cfp "../omconfparse"
+import "../omconfparse"
 import "fmt"
+import "flag"
+import "runtime"
 
 func main() {
-	result, err := cfp.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp.yaml")
-	if result == nil || err != nil {
+	var defaultFile string
+
+	if runtime.GOOS == "windows" {
+		defaultFile = "./webapp.yaml"
+	} else {
+		defaultFile = "/waf/config/misc/webapp.yaml"
+	}
+
+	oldfile := flag.String("old", defaultFile, "The pathname of the webapp.yaml file to be upgraded.")
+	newfile := flag.String("new", defaultFile, "The pathname of the webapp.yaml file to be generated after upgrading.")
+
+	flag.Parse()
+
+	webappdata, err := omconfparse.ParseWebAppFile(*oldfile)
+
+	if err != nil {
 		fmt.Println("parse file error.")
 	}
 
-	cfp.ParseConf(result)
+	result := omconfparse.ParseWebAppData(webappdata)
+	omconfparse.GenWebAppFile(*newfile, result)
 	return
 }

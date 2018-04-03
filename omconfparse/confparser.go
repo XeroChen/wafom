@@ -2,13 +2,12 @@ package omconfparse
 
 import (
 	"../omdata"
+	"bytes"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
 
-// ParseYamlFile parse yaml file to map[interface{}]interface{}
-//func ParseWebAppFile(filepath string) (result map[interface{}]interface{}, err error) {
 func ParseWebAppFile(filepath string) (result omdata.WebAppFmt, err error) {
 	content, err := ioutil.ReadFile(filepath)
 	if err != nil {
@@ -18,6 +17,27 @@ func ParseWebAppFile(filepath string) (result omdata.WebAppFmt, err error) {
 	var conf omdata.WebAppFmt
 	err = yaml.Unmarshal(content, &conf)
 	return conf, err
+}
+
+func GenWebAppFile(newfile string, newdata omdata.WebAppFmt) bool {
+
+	content, err := yaml.Marshal(newdata)
+
+	if err != nil {
+		fmt.Printf("\nyaml.Marshal error: %s", err.Error())
+		return false
+	}
+
+	fmt.Printf("\nioutil.WriteFile writes %s with %v bytes", newfile, bytes.Count(content, nil)-1)
+
+	err = ioutil.WriteFile(newfile, content, 0644)
+
+	if err != nil {
+		fmt.Printf("\nioutil.WriteFile error: %s", err.Error())
+		return false
+	}
+
+	return true
 }
 
 func ParseWebAppData(olddata omdata.WebAppFmt) (newdata omdata.WebAppFmt) {
@@ -32,8 +52,12 @@ func ParseWebAppData(olddata omdata.WebAppFmt) (newdata omdata.WebAppFmt) {
 }
 
 func ParseWebapps(olddata map[int]omdata.Webapps) (newdata map[int]omdata.Webapps) {
+
+	newdata = make(map[int]omdata.Webapps)
+
 	for k := range olddata {
 		newdata[k] = ParseSite(olddata[k])
+		fmt.Printf("\nSite %v parsed", k)
 	}
 	return newdata
 }
@@ -45,16 +69,15 @@ func ParseSite(olddata omdata.Webapps) (newdata omdata.Webapps) {
 	if olddata.Frontend_linkage != "" || olddata.Frontend_ip != "" ||
 		olddata.Frontend_netmask != "" || olddata.Frontend_gateway != "" {
 
-		newdata.Frontend.SetPresent(true)
 		newdata.Frontend.Ip = olddata.Frontend_ip
 		newdata.Frontend.Netmask = olddata.Frontend_netmask
 		newdata.Frontend.Gateway = olddata.Frontend_gateway
 		newdata.Frontend.Linkage = olddata.Frontend_linkage
 
-		olddata.Frontend_ip = ""
-		olddata.Frontend_netmask = ""
-		olddata.Frontend_gateway = ""
-		olddata.Frontend_linkage = ""
+		newdata.Frontend_ip = ""
+		newdata.Frontend_netmask = ""
+		newdata.Frontend_gateway = ""
+		newdata.Frontend_linkage = ""
 
 	}
 
@@ -62,23 +85,27 @@ func ParseSite(olddata omdata.Webapps) (newdata omdata.Webapps) {
 	if olddata.Backend_linkage != "" || olddata.Backend_ip != "" ||
 		olddata.Backend_netmask != "" || olddata.Backend_gateway != "" {
 
-		newdata.Backend.SetPresent(true)
 		newdata.Backend.Ip = olddata.Backend_ip
 		newdata.Backend.Netmask = olddata.Backend_netmask
 		newdata.Backend.Gateway = olddata.Backend_gateway
 		newdata.Backend.Linkage = olddata.Backend_linkage
-		olddata.Backend_ip = ""
-		olddata.Backend_netmask = ""
-		olddata.Backend_gateway = ""
-		olddata.Backend_linkage = ""
+
+		newdata.Backend_ip = ""
+		newdata.Backend_netmask = ""
+		newdata.Backend_gateway = ""
+		newdata.Backend_linkage = ""
 
 	}
 
 	/* Handle Linkage */
 	if s, ok := olddata.Linkage.(string); ok == true {
-		LinkageList := make([]string, 1)
-		LinkageList[0] = s
-		newdata.Linkage = LinkageList
+		if s == "FAKE" {
+			newdata.Linkage = s
+		} else {
+			LinkageList := make([]string, 1)
+			LinkageList[0] = s
+			newdata.Linkage = LinkageList
+		}
 	} else {
 		newdata.Linkage = olddata.Linkage
 	}

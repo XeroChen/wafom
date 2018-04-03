@@ -31,7 +31,7 @@ type Webapps struct {
 	Transparent               string `yaml:",omitempty"`
 	Xfwd4_status              string `yaml:",omitempty"`
 	Xfwd4                     string `yaml:",omitempty"`
-	Frontend_port             int    `yaml:",omitempty"`
+	Frontend_port             string `yaml:",omitempty"`
 	Linkage                   interface{}
 	Mode                      string
 	Vrrp                      string
@@ -49,8 +49,8 @@ type Webapps struct {
 	Enabled                   string
 	Acls                      []string `yaml:",flow"`
 	Log                       string
-	Firewall                  []string `yaml:",flow"`
-	Mask                      string
+	Firewall                  []string    `yaml:",flow"`
+	Mask                      string      `yaml:"mask,omitempty"`
 	Frontend                  FrontEndFmt `yaml:"frontend,omitempty"`
 	Backend                   BackendFmt  `yaml:"backend,omitempty"`
 	//
@@ -66,33 +66,35 @@ type Webapps struct {
 }
 
 type FrontEndFmt struct {
-	present bool
+	//present bool
 	Ip      string
 	Netmask string
 	Gateway string
 	Linkage string
 }
 
+/*
 func (fn *FrontEndFmt) SetPresent(present bool) {
 	fn.present = present
 }
 
 func (fn FrontEndFmt) IsZero() bool {
-	return !fn.present
-}
+	return (bn.Ip == "" && bn.Netmask == "" && bn.Gateway == "" && bn.Linkage == "")
+}*/
 
 type BackendFmt struct {
-	present bool
+	//present bool
 	Ip      string
 	Netmask string
 	Gateway string
 	Linkage string
 }
 
+/*
 func (bn *BackendFmt) SetPresent(present bool) {
 	bn.present = present
 }
 
 func (bn BackendFmt) IsZero() bool {
-	return !bn.present
-}
+	return (bn.Ip == "" && bn.Netmask == "" && bn.Gateway == "" && bn.Linkage == "")
+}*/
