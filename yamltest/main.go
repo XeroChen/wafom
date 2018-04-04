@@ -1,8 +1,8 @@
 package main
 
 import (
-	"../omconfparse"
-	"../omdata"
+	//"../omconfparse"
+	//"../omdata"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -36,6 +36,7 @@ type TestYaml struct {
 	Embb2         Emb_struct2 `yaml:",omitempty"`
 	Embb3         Emb_struct3 `yaml:",omitempty"`
 	Other         interface{} `yaml:",flow"`
+	Other2        string
 }
 
 func yamlMarshal(st *TestYaml) {
@@ -66,7 +67,6 @@ func yamlUnmarshal() *TestYaml {
 	return &conf
 }
 
-/*
 func main() {
 	var conf TestYaml
 	conf.Reverse_xfwd4 = "on"
@@ -78,8 +78,9 @@ func main() {
 	conf.Other = []string{"", "yes"}
 	yamlMarshal(&conf)
 	yamlUnmarshal()
-}*/
+}
 
+/*
 func main() {
 	var result omdata.WebAppFmt
 	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.0\\webapp.yaml")
@@ -95,4 +96,4 @@ func main() {
 	result, _ = omconfparse.ParseWebAppFile("E:\\code\\wafom\\omconfparse\\webapp\\4.3.2\\webapp.yaml")
 	fmt.Printf("\n%v\n", result)
 	return
-}
+}*/
