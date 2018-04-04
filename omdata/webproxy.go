@@ -1,5 +1,7 @@
 package omdata
 
+import "strings"
+
 type AppACRuleFmt struct {
 	Fetch       string // legacy object
 	Fetch_param string
@@ -11,7 +13,8 @@ type AppACRuleFmt struct {
 	Match_param string
 	Disabled    string
 	Ipgeo       []string `yaml:",omitempty"`
-	Neg         string   // legacy match: match 1; unmatch 0
+	Geo_data    [][2]string
+	Neg         string // legacy match: match 1; unmatch 0
 }
 
 func (newdata *AppACRuleFmt) Upgrade(olddata AppACRuleFmt) {
@@ -37,8 +40,7 @@ func (newdata *AppACRuleFmt) upgradeFetch(olddata AppACRuleFmt) {
 	if olddata.Object == "ext" {
 		newdata.upgradeExt(olddata)
 	} else if olddata.Object == "url" {
-		newdata.upgradeUrl(olddata)
-
+		newdata.upgradeURL(olddata)
 	} else {
 		newdata.Fetch = olddata.Object
 	}
@@ -63,16 +65,27 @@ func (newdata *AppACRuleFmt) upgradeExt(olddata AppACRuleFmt) {
 	newdata.Match = olddata.Content
 }
 
-func (newdata *AppACRuleFmt) upgradeUrl(olddata AppACRuleFmt) {
+func (newdata *AppACRuleFmt) upgradeURL(olddata AppACRuleFmt) {
 	newdata.Fetch = "url"
 	newdata.Match_param = "reg"
 	newdata.Match = olddata.Content
 }
 
+func (newdata *AppACRuleFmt) upgradeGeo(olddata AppACRuleFmt) {
+	newdata.Fetch = "location"
+	newdata.Match_param = ""
+	newdata.Match = olddata.Ipgeo
+
+	if len(olddata.Content) > 0 {
+		oldGeo := olddata.Content[0]
+	}
+
+}
+
 func (newdata *AppACRuleFmt) upgradeWebapps(olddata AppACRuleFmt) {
 	if s, ok := olddata.Webapps.(string); ok == true {
 		if s == "all" {
-			sitelist = make([]string, 1)
+			sitelist := make([]string, 1)
 			sitelist[0] = s
 			newdata.Webapps = sitelist
 		}
