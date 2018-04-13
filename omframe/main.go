@@ -1,11 +1,15 @@
 package main
 
-import "../omconfparse"
-import "fmt"
-import "flag"
-import "runtime"
+import (
+	"../omconfparse"
+	"flag"
+	"fmt"
+	"runtime"
+	"strings"
+)
 
-func main() {
+func handleWebapp() {
+
 	var defaultFile string
 
 	if runtime.GOOS == "windows" {
@@ -14,8 +18,8 @@ func main() {
 		defaultFile = "/waf/config/misc/webapp.yaml"
 	}
 
-	oldfile := flag.String("old", defaultFile, "The pathname of the webapp.yaml file to be upgraded.")
-	newfile := flag.String("new", defaultFile, "The pathname of the webapp.yaml file to be generated after upgrading.")
+	oldfile := flag.String("old", defaultFile, "The pathname of the file to be upgraded.")
+	newfile := flag.String("new", defaultFile, "The pathname of the file to be generated after upgrading.")
 
 	flag.Parse()
 
@@ -25,7 +29,45 @@ func main() {
 		fmt.Println("parse file error.")
 	}
 
-	result := omconfparse.ParseWebAppData(webappdata)
-	omconfparse.GenWebAppFile(*newfile, result)
+	omconfparse.GenWebAppFile(*newfile, webappdata)
+}
+
+func handleWebProxy() {
+	var defaultFile string
+
+	if runtime.GOOS == "windows" {
+		defaultFile = "./webproxy.yaml"
+	} else {
+		defaultFile = "/waf/config/misc/webproxy.yaml"
+	}
+
+	oldfile := flag.String("old", defaultFile, "The pathname of the file to be upgraded.")
+	newfile := flag.String("new", strings.Replace(defaultFile, "webproxy.yaml", "webproxy_transparent.yaml", -1), "The pathname of the file to be generated after upgrading.")
+
+	flag.Parse()
+
+	webproxydata, err := omconfparse.ParseWebProxyFile(*oldfile)
+
+	if err != nil {
+		fmt.Printf("ParseWebProxyFile returns:%s", err.Error())
+		return
+	}
+
+	omconfparse.GenWebProxyFile(*newfile, webproxydata)
+}
+func main() {
+
+	typeFlag := flag.String("type", "", "webapp or webproxy to be upgrade.")
+	flag.Parse()
+
+	switch *typeFlag {
+	case "webapp":
+		handleWebapp()
+	case "webproxy":
+		handleWebProxy()
+	default:
+		fmt.Printf("\ntype %v not accepted.", *typeFlag)
+	}
+
 	return
 }

@@ -1,0 +1,228 @@
+---
+1378969989:
+  object: url
+  action: check
+  content:
+  - \..*/
+  webapps: all
+1366164828:
+  object: url
+  action: check
+  content:
+  - \?
+  webapps: all
+1366164858:
+  object: method
+  action: check
+  content:
+  - POST
+  match: match
+  webapps: all
+1366165031:
+  object: ext
+  action: pass
+  content:
+  - .html
+  - .htm
+  - .css
+  - .js
+  - .png
+  - .gif
+  - .jpg
+  - .jepg
+  - .ico
+  - .doc
+  - .pdf
+  - .txt
+  - .xls
+  - .ppt
+  - .mpg
+  - .mpeg
+  - .mp3
+  - .mp4
+  - .rmvb
+  - .avi
+  - .flv
+  - .swf
+  - .wma
+  - .xml
+  - .bmp
+  webapps: all
+1398243972:
+  object: ext
+  action: check
+  content:
+  - .asa
+  - .asax
+  - .ascx
+  - .backup
+  - .bak
+  - .bat
+  - .cdx
+  - .cer
+  - .cfg
+  - .cmd
+  - .com
+  - .config
+  - .conf
+  - .cs
+  - .csproj
+  - .csr
+  - .dat
+  - .db
+  - .dbf
+  - .dos
+  - .htr
+  - .htw
+  - .ida
+  - .idc
+  - .idq
+  - .inc
+  - .ini
+  - .key
+  - .licx
+  - .lnk
+  - .log
+  - .mdb
+  - .old
+  - .pass
+  - .pdb
+  - .pol
+  - .printer
+  - .pwd
+  - .resources
+  - .resx
+  - .sql
+  - .sys
+  - .vb
+  - .vbproj
+  - .vsdisco
+  - .webinfo
+  - .xsd
+  - .xsx
+  match: match
+  webapps: all
+  disabled: 1
+1398243801:
+  object: url
+  action: pass
+  content:
+  - \?
+  match: unmatch
+  webapps: all
+  disabled: 1
+1398243834:
+  object: url
+  action: pass
+  content:
+  - \?[\/\.0-9a-zA-Z_=&]+$
+  match: match
+  webapps: all
+  disabled: 1
+1522732470:
+  object: ext
+  action: pass
+  content:
+  - .js
+  match: match
+  webapps: all
+1522732492:
+  object: ext
+  action: check
+  content:
+  - .html
+  match: match
+  webapps: all
+1522732511:
+  object: ext
+  action: pass
+  content:
+  - .asp
+  match: unmatch
+  webapps: all
+1522732530:
+  object: ext
+  action: pass
+  content:
+  - .jpg
+  match: unmatch
+  webapps: all
+1522732845:
+  object: url
+  action: pass
+  content:
+  - /web/show.asp?id=1310
+  match: match
+  webapps: all
+1522732929:
+  object: url
+  action: check
+  content:
+  - http://192.168.26.134/web/show.asp?id=1303
+  match: match
+  webapps: all
+1522732956:
+  object: method
+  action: pass
+  content:
+  - GET
+  match: match
+  webapps: all
+1522732990:
+  object: method
+  action: check
+  content:
+  - POST
+  match: match
+  webapps: all
+1522733021:
+  object: method
+  action: check
+  content:
+  - PUT
+  match: unmatch
+  webapps: all
+1522733102:
+  object: method
+  action: pass
+  content:
+  - DELETE
+  match: unmatch
+  webapps: all
+1522733188:
+  object: location
+  action: pass
+  content:
+  - 重庆
+  match: match
+  webapps: all
+  ipgeo:
+  - geo.CN.CQ
+1522733209:
+  object: location
+  action: check
+  content:
+  - 阿尔巴尼亚
+  match: match
+  webapps: all
+  ipgeo:
+  - geo.AL
+1522733231:
+  object: location
+  action: pass
+  content:
+  - 亚美尼亚
+  match: unmatch
+  webapps: all
+  ipgeo:
+  - geo.AM
+1522733265:
+  object: location
+  action: check
+  content:
+  - 黑龙江
+  match: unmatch
+  webapps: all
+  ipgeo:
+  - geo.CN.HL
+...

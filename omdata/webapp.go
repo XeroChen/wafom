@@ -111,11 +111,68 @@ type BackendFmt struct {
 	Linkage string
 }
 
-/*
-func (bn *BackendFmt) SetPresent(present bool) {
-	bn.present = present
+func (old WebAppFmt) Upgrade() (new WebAppFmt) {
+	new.Deploy = old.Deploy
+	new.Reverse_transparent = old.Reverse_transparent
+	new.Reverse_client_ip = old.Reverse_client_ip
+	new.Reverse_xfwd4 = old.Reverse_xfwd4
+	new.Reverse_xfwd4_status = old.Reverse_xfwd4_status
+	new.Web_server = old.Web_server
+	new.Webapps = make(map[int]Webapps)
+
+	for k, v := range old.Webapps {
+		new.Webapps[k] = v.upgrade()
+	}
+
+	return new
 }
 
-func (bn BackendFmt) IsZero() bool {
-	return (bn.Ip == "" && bn.Netmask == "" && bn.Gateway == "" && bn.Linkage == "")
-}*/
+func (olddata Webapps) upgrade() (newdata Webapps) {
+	newdata = olddata
+	/* Handle FrontEnd */
+	if olddata.Frontend_linkage != "" || olddata.Frontend_ip != "" ||
+		olddata.Frontend_netmask != "" || olddata.Frontend_gateway != "" {
+
+		newdata.Frontend.Ip = olddata.Frontend_ip
+		newdata.Frontend.Netmask = olddata.Frontend_netmask
+		newdata.Frontend.Gateway = olddata.Frontend_gateway
+		newdata.Frontend.Linkage = olddata.Frontend_linkage
+
+		newdata.Frontend_ip = ""
+		newdata.Frontend_netmask = ""
+		newdata.Frontend_gateway = ""
+		newdata.Frontend_linkage = ""
+
+	}
+
+	/* Handle BackEnd */
+	if olddata.Backend_linkage != "" || olddata.Backend_ip != "" ||
+		olddata.Backend_netmask != "" || olddata.Backend_gateway != "" {
+
+		newdata.Backend.Ip = olddata.Backend_ip
+		newdata.Backend.Netmask = olddata.Backend_netmask
+		newdata.Backend.Gateway = olddata.Backend_gateway
+		newdata.Backend.Linkage = olddata.Backend_linkage
+
+		newdata.Backend_ip = ""
+		newdata.Backend_netmask = ""
+		newdata.Backend_gateway = ""
+		newdata.Backend_linkage = ""
+
+	}
+
+	/* Handle Linkage */
+	if s, ok := olddata.Linkage.(string); ok == true {
+		if s == "FAKE" {
+			newdata.Linkage = s
+		} else {
+			LinkageList := make([]string, 1)
+			LinkageList[0] = s
+			newdata.Linkage = LinkageList
+		}
+	} else {
+		newdata.Linkage = olddata.Linkage
+	}
+
+	return newdata
+}

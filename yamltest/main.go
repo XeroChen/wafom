@@ -8,15 +8,31 @@ import (
 	"io/ioutil"
 )
 
+type ItfUpgrade interface {
+	Upgrade() interface{}
+}
+
 type Emb_struct1 struct {
 	Sfield1 string
 	Sfield2 string
+}
+
+func (old Emb_struct1) Upgrade() (new Emb_struct1) {
+	new = old
+	fmt.Println("Emb_struct1 upgrading.")
+	return
 }
 
 type Emb_struct2 struct {
 	present bool
 	Ifield1 int
 	Ifield2 int
+}
+
+func (old Emb_struct2) Upgrade() (new Emb_struct2) {
+	new = old
+	fmt.Println("Emb_struct2 upgrading.")
+	return
 }
 
 type Emb_struct3 struct {
@@ -37,6 +53,15 @@ type TestYaml struct {
 	Embb3         Emb_struct3 `yaml:",omitempty"`
 	Other         interface{} `yaml:",flow"`
 	Other2        string
+}
+
+func DoUpgrade() {
+	st1 := Emb_struct1{"yes", "no"}
+	st2 := Emb_struct2{true, 1, 2}
+	newSt1 := st1.Upgrade()
+	newSt2 := st2.Upgrade()
+	fmt.Println(newSt1)
+	fmt.Println(newSt2)
 }
 
 func yamlMarshal(st *TestYaml) {
@@ -68,6 +93,11 @@ func yamlUnmarshal() *TestYaml {
 }
 
 func main() {
+	DoUpgrade()
+}
+
+/*
+func main() {
 	var conf TestYaml
 	conf.Reverse_xfwd4 = "on"
 	conf.Embb1.Sfield1 = "xxx"
@@ -78,7 +108,7 @@ func main() {
 	conf.Other = []string{"", "yes"}
 	yamlMarshal(&conf)
 	yamlUnmarshal()
-}
+}*/
 
 /*
 func main() {
